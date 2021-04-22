@@ -188,16 +188,11 @@ export class Generator {
                                 : dedent`
                                   const mockUrl${categoryUID} = ${JSON.stringify(
                                     syntheticalConfig.mockUrl,
-                                  )} as any
-                                  const devUrl${categoryUID} = ${JSON.stringify(
-                                    syntheticalConfig.devUrl,
-                                  )} as any
-                                  const prodUrl${categoryUID} = ${JSON.stringify(
-                                    syntheticalConfig.prodUrl,
-                                  )} as any
+                                  )}
+                              
                                   const dataKey${categoryUID} = ${JSON.stringify(
                                     syntheticalConfig.dataKey,
-                                  )} as any
+                                  )}
                                 `,
                               ...(await Promise.all(
                                 interfaceList
@@ -313,8 +308,8 @@ export class Generator {
           syntheticalConfig,
         } = outputFileList[outputFilePath]
 
-        const rawRequestFunctionFilePath = requestFunctionFilePath
-        const rawRequestHookMakerFilePath = requestHookMakerFilePath
+        // const rawRequestFunctionFilePath = requestFunctionFilePath
+        // const rawRequestHookMakerFilePath = requestHookMakerFilePath
 
         // 支持 .jsx? 后缀
         outputFilePath = outputFilePath.replace(/\.js(x)?$/, '.ts$1')
@@ -328,120 +323,38 @@ export class Generator {
         )
 
         if (!syntheticalConfig.typesOnly) {
-          if (!(await fs.pathExists(rawRequestFunctionFilePath))) {
-            await fs.outputFile(
-              requestFunctionFilePath,
-              dedent`
-                import { RequestFunctionParams } from 'yapi-to-typescript'
-
-                export interface RequestOptions {
-                  /**
-                   * 使用的服务器。
-                   *
-                   * - \`prod\`: 生产服务器
-                   * - \`dev\`: 测试服务器
-                   * - \`mock\`: 模拟服务器
-                   *
-                   * @default prod
-                   */
-                  server?: 'prod' | 'dev' | 'mock',
-                }
-
-                export default function request<TResponseData>(
-                  payload: RequestFunctionParams,
-                  options: RequestOptions = {
-                    server: 'prod',
-                  },
-                ): Promise<TResponseData> {
-                  return new Promise<TResponseData>((resolve, reject) => {
-                    // 基本地址
-                    const baseUrl = options.server === 'mock'
-                      ? payload.mockUrl
-                      : options.server === 'dev'
-                        ? payload.devUrl
-                        : payload.prodUrl
-
-                    // 请求地址
-                    const url = \`\${baseUrl}\${payload.path}\`
-
-                    // 具体请求逻辑
-                  })
-                }
-              `,
-            )
-          }
-          if (
-            syntheticalConfig.reactHooks &&
-            syntheticalConfig.reactHooks.enabled &&
-            !(await fs.pathExists(rawRequestHookMakerFilePath))
-          ) {
-            await fs.outputFile(
-              requestHookMakerFilePath,
-              dedent`
-                import { useState, useEffect } from 'react'
-                import { RequestConfig } from 'yapi-to-typescript'
-                import { Request } from ${JSON.stringify(
-                  getNormalizedRelativePath(
-                    requestHookMakerFilePath,
-                    outputFilePath,
-                  ),
-                )}
-                import baseRequest from ${JSON.stringify(
-                  getNormalizedRelativePath(
-                    requestHookMakerFilePath,
-                    requestFunctionFilePath,
-                  ),
-                )}
-
-                export default function makeRequestHook<TRequestData, TRequestConfig extends RequestConfig, TRequestResult extends ReturnType<typeof baseRequest>>(request: Request<TRequestData, TRequestConfig, TRequestResult>) {
-                  type Data = TRequestResult extends Promise<infer R> ? R : TRequestResult
-                  return function useRequest(requestData: TRequestData) {
-                    // 一个简单的 Hook 实现，实际项目可结合其他库使用，比如：
-                    // @umijs/hooks 的 useRequest (https://github.com/umijs/hooks)
-                    // swr (https://github.com/zeit/swr)
-
-                    const [loading, setLoading] = useState(true)
-                    const [data, setData] = useState<Data>()
-
-                    useEffect(() => {
-                      request(requestData).then(data => {
-                        setLoading(false)
-                        setData(data as any)
-                      })
-                    }, [JSON.stringify(requestData)])
-
-                    return {
-                      loading,
-                      data,
-                    }
-                  }
-                }
-              `,
-            )
-          }
+          // if (!(await fs.pathExists(rawRequestFunctionFilePath))) {
+          //   await fs.outputFile(
+          //     requestFunctionFilePath,
+          //     dedent`
+          //     `,
+          //   )
+          // }
+          // if (
+          //   syntheticalConfig.reactHooks &&
+          //   syntheticalConfig.reactHooks.enabled &&
+          //   !(await fs.pathExists(rawRequestHookMakerFilePath))
+          // ) {
+          //   await fs.outputFile(
+          //     requestHookMakerFilePath,
+          //     dedent`
+          //     `,
+          //   )
+          // }
         }
 
         // 始终写入主文件
+        /* tslint:disable */
+        /* eslint-disable */
         const rawOutputContent = dedent`
-          /* tslint:disable */
-          /* eslint-disable */
-
-          /* 该文件由 yapi-to-typescript 自动生成，请勿直接修改！！！ */
-
           ${
             syntheticalConfig.typesOnly
               ? content.join('\n\n').trim()
               : dedent`
-                // @ts-ignore
-                // prettier-ignore
-                import { Method, RequestBodyType, ResponseBodyType, RequestConfig, RequestFunctionRestArgs, FileData, prepare } from 'yapi-to-typescript'
-                // @ts-ignore
-                import request from ${JSON.stringify(
-                  getNormalizedRelativePath(
-                    outputFilePath,
-                    requestFunctionFilePath,
-                  ),
-                )}
+              import { makeRequest } from './makeRequest';
+              import { Method, RequestBodyType, ResponseBodyType } from './type';
+              import type { RequestConfig } from './type';
+
                 ${
                   !syntheticalConfig.reactHooks ||
                   !syntheticalConfig.reactHooks.enabled
@@ -455,44 +368,6 @@ export class Generator {
                         ),
                       )}
                     `
-                }
-
-                // makeRequest
-                function makeRequestRequired<TReqeustData, TResponseData, TRequestConfig extends RequestConfig>(requestConfig: TRequestConfig) {
-                  const req = function (requestData: TReqeustData, ...args: RequestFunctionRestArgs<typeof request>) {
-                    return request<TResponseData>(prepare(requestConfig, requestData), ...args)
-                  }
-                  req.requestConfig = requestConfig
-                  return req
-                }
-                function makeRequestOptional<TReqeustData, TResponseData, TRequestConfig extends RequestConfig>(requestConfig: TRequestConfig) {
-                  const req = function (requestData?: TReqeustData, ...args: RequestFunctionRestArgs<typeof request>) {
-                    return request<TResponseData>(prepare(requestConfig, requestData), ...args)
-                  }
-                  req.requestConfig = requestConfig
-                  return req
-                }
-                function makeRequest<TReqeustData, TResponseData, TRequestConfig extends RequestConfig>(requestConfig: TRequestConfig) {
-                  const optional = makeRequestOptional<TReqeustData, TResponseData, TRequestConfig>(requestConfig)
-                  const required = makeRequestRequired<TReqeustData, TResponseData, TRequestConfig>(requestConfig)
-                  return (
-                      requestConfig.requestDataOptional
-                        ? optional
-                        : required
-                    ) as (
-                      TRequestConfig['requestDataOptional'] extends true
-                        ? typeof optional
-                        : typeof required
-                    )
-                }
-
-                // Request
-                export type Request<TReqeustData, TRequestConfig extends RequestConfig, TRequestResult> = (
-                  TRequestConfig['requestDataOptional'] extends true
-                    ? (requestData?: TReqeustData, ...args: RequestFunctionRestArgs<typeof request>) => TRequestResult
-                    : (requestData: TReqeustData, ...args: RequestFunctionRestArgs<typeof request>) => TRequestResult
-                ) & {
-                  requestConfig: TRequestConfig
                 }
 
                 ${content.join('\n\n').trim()}
@@ -510,10 +385,11 @@ export class Generator {
           bracketSpacing: false,
           endOfLine: 'lf',
         })
+        /* prettier-ignore-start */
+        /* prettier-ignore-end */
         const outputContent = `${dedent`
-          /* prettier-ignore-start */
+          
           ${prettyOutputContent}
-          /* prettier-ignore-end */
         `}\n`
         await fs.outputFile(outputFilePath, outputContent)
 
@@ -836,9 +712,10 @@ export class Generator {
           : dedent`
             ${genComment(title => `接口 ${title} 的 **请求配置的类型**`)}
             type ${requestConfigTypeName} = Readonly<RequestConfig<
+              ${JSON.stringify(
+                extendedInterfaceInfo._project.name.split('_')[0],
+              )},
               ${JSON.stringify(syntheticalConfig.mockUrl)},
-              ${JSON.stringify(syntheticalConfig.devUrl)},
-              ${JSON.stringify(syntheticalConfig.prodUrl)},
               ${JSON.stringify(extendedInterfaceInfo.path)},
               ${JSON.stringify(syntheticalConfig.dataKey) || 'undefined'},
               ${paramNameType},
@@ -849,8 +726,7 @@ export class Generator {
             ${genComment(title => `接口 ${title} 的 **请求配置**`)}
             const ${requestConfigName}: ${requestConfigTypeName} = {
               mockUrl: mockUrl${categoryUID},
-              devUrl: devUrl${categoryUID},
-              prodUrl: prodUrl${categoryUID},
+              module: '${extendedInterfaceInfo._project.name.split('_')[0]}',
               path: ${JSON.stringify(extendedInterfaceInfo.path)},
               method: Method.${extendedInterfaceInfo.method},
               requestBodyType: RequestBodyType.${

@@ -590,6 +590,7 @@ export type Config = ServerConfig | ServerConfig[]
  * 请求配置。
  */
 export interface RequestConfig<
+  Module extends string = string,
   MockUrl extends string = string,
   DevUrl extends string = string,
   ProdUrl extends string = string,
@@ -599,6 +600,8 @@ export interface RequestConfig<
   QueryName extends string = string,
   RequestDataOptional extends boolean = boolean
 > {
+  /** 接口 Module 地址，结尾无 `/` */
+  module: Module
   /** 接口 Mock 地址，结尾无 `/` */
   mockUrl: MockUrl
   /** 接口测试环境地址，结尾无 `/` */
