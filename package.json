@@ -1,25 +1,25 @@
 {
-  "name": "yapi-to-typescript",
-  "version": "3.18.1",
+  "name": "@ichengde/yapi-to-typescript",
+  "version": "0.0.1",
   "description": "根据 YApi 的接口定义生成 TypeScript/JavaScript 的接口类型及其请求函数代码。",
   "keywords": [
     "yapi",
     "codegen",
     "typescript"
   ],
-  "homepage": "https://github.com/fjc0k/yapi-to-typescript",
+  "homepage": "https://github.com/ichengde/yapi-to-typescript",
   "bugs": {
-    "url": "https://github.com/fjc0k/yapi-to-typescript/issues"
+    "url": "https://github.com/ichengde/yapi-to-typescript/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:fjc0k/yapi-to-typescript.git"
+    "url": "git@github.com:ichengde/yapi-to-typescript.git"
   },
   "license": "MIT",
   "author": {
-    "name": "Jay Fong",
-    "email": "fjc0kb@gmail.com",
-    "url": "https://github.com/fjc0k"
+    "name": "chegde",
+    "email": "chegde@foxmail.com",
+    "url": "https://github.com/ichengde"
   },
   "sideEffects": false,
   "main": "lib/cjs/index.js",
