@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.21.0"></a>
+
+# [3.21.0](https://github.com/fjc0k/yapi-to-typescript/compare/v3.20.0...v3.21.0) (2021-05-20)
+
+### Features
+
+- 支持解析路径参数、查询参数的类型（YApi-X 已支持为路径参数、查询参数设置类型） ([6a37735](https://github.com/fjc0k/yapi-to-typescript/commit/6a37735))
+
+<a name="3.20.0"></a>
+
+# [3.20.0](https://github.com/fjc0k/yapi-to-typescript/compare/v3.19.0...v3.20.0) (2021-05-13)
+
+### Features
+
+- 将 requestFunctionName 请求函数的名称加入请求配置 ([749f7b5](https://github.com/fjc0k/yapi-to-typescript/commit/749f7b5))
+
+<a name="3.19.0"></a>
+
+# [3.19.0](https://github.com/fjc0k/yapi-to-typescript/compare/v3.18.1...v3.19.0) (2021-04-26)
+
+### Features
+
+- 将接口请求头加入请求配置 ([67f6ce0](https://github.com/fjc0k/yapi-to-typescript/commit/67f6ce0))
+
 <a name="3.18.1"></a>
 
 ## [3.18.1](https://github.com/fjc0k/yapi-to-typescript/compare/v3.18.0...v3.18.1) (2021-03-31)

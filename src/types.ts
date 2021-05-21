@@ -117,6 +117,22 @@ export enum RequestBodyType {
   none = 'none',
 }
 
+/** 请求路径参数类型 */
+export enum RequestParamType {
+  /** 字符串 */
+  string = 'string',
+  /** 数字 */
+  number = 'number',
+}
+
+/** 请求查询参数类型 */
+export enum RequestQueryType {
+  /** 字符串 */
+  string = 'string',
+  /** 数字 */
+  number = 'number',
+}
+
 /** 请求表单条目类型 */
 export enum RequestFormItemType {
   /** 纯文本 */
@@ -165,6 +181,19 @@ export interface Interface {
   catid: number
   /** 标签列表 */
   tag: string[]
+  /** 请求头 */
+  req_headers: Array<{
+    /** 名称 */
+    name: string
+    /** 值 */
+    value: string
+    /** 备注 */
+    desc: string
+    /** 示例 */
+    example: string
+    /** 是否必需 */
+    required: Required
+  }>
   /** 路径参数 */
   req_params: Array<{
     /** 名称 */
@@ -173,6 +202,8 @@ export interface Interface {
     desc: string
     /** 示例 */
     example: string
+    /** 类型（YApi-X） */
+    type?: RequestParamType
   }>
   /** 仅 GET：请求串 */
   req_query: Array<{
@@ -184,6 +215,8 @@ export interface Interface {
     example: string
     /** 是否必需 */
     required: Required
+    /** 类型（YApi-X） */
+    type?: RequestQueryType
   }>
   /** 仅 POST：请求内容类型。为 text, file, raw 时不必特殊处理。 */
   req_body_type: RequestBodyType
@@ -612,6 +645,8 @@ export interface RequestConfig<
   path: Path
   /** 请求方法 */
   method: Method
+  /** 请求头，除了 Content-Type 的所有头 */
+  requestHeaders: Record<string, string>
   /** 请求数据类型 */
   requestBodyType: RequestBodyType
   /** 返回数据类型 */
@@ -628,6 +663,8 @@ export interface RequestConfig<
   requestDataJsonSchema: JSONSchema4
   /** 返回数据的 JSON Schema (仅开启了 JSON Schema 生成时生效) */
   responseDataJsonSchema: JSONSchema4
+  /** 请求函数名称 */
+  requestFunctionName: string
 }
 
 /**
