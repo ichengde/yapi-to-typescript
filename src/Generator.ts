@@ -351,9 +351,10 @@ export class Generator {
             syntheticalConfig.typesOnly
               ? content.join('\n\n').trim()
               : dedent`
+              /* eslint-disable @typescript-eslint/no-empty-interface */
               import { makeRequest } from './makeRequest';
               import { Method, RequestBodyType, ResponseBodyType } from './type';
-              import type { RequestConfig } from './type';
+              import type { RequestConfig, FileData } from './type';
 
                 ${
                   !syntheticalConfig.reactHooks ||

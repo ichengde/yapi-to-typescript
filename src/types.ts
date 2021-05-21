@@ -624,8 +624,6 @@ export type Config = ServerConfig | ServerConfig[]
  */
 export interface RequestConfig<
   Module extends string = string,
-  MockUrl extends string = string,
-  DevUrl extends string = string,
   ProdUrl extends string = string,
   Path extends string = string,
   DataKey extends string | undefined = string | undefined,
@@ -635,10 +633,6 @@ export interface RequestConfig<
 > {
   /** 接口 Module 地址，结尾无 `/` */
   module: Module
-  /** 接口 Mock 地址，结尾无 `/` */
-  mockUrl: MockUrl
-  /** 接口测试环境地址，结尾无 `/` */
-  devUrl: DevUrl
   /** 接口生产环境地址，结尾无 `/` */
   prodUrl: ProdUrl
   /** 接口路径，以 `/` 开头 */
